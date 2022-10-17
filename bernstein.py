@@ -2,6 +2,7 @@ import numpy as np
 import scipy.special
 from scipy.special import comb
 
+
 # Pack index
 def idx(i, j, n): return ((2 * n + 3) * j - j * j) // 2 + i
 
