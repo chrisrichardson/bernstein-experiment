@@ -7,7 +7,7 @@ from scipy.special import comb
 def idx(i, j, n): return ((2 * n + 3) * j - j * j) // 2 + i
 
 
-def compute_mass_matrix_triangle(n, f, fdegree):
+def compute_mass_matrix_triangle(n, fdegree):
 
     rule1 = scipy.special.roots_jacobi((2*n + fdegree) // 2 + 1, 1, 0)
     rule2 = scipy.special.roots_jacobi((2*n + fdegree) // 2 + 1, 0, 0)
@@ -15,7 +15,7 @@ def compute_mass_matrix_triangle(n, f, fdegree):
     rule2 = ((rule2[0] + 1) / 2, rule2[1] / 2)
     q = len(rule1[0])
 
-    cmat = [str(comb(p+q, p)) for p in range(n+1) for q in range(n+1)]
+    cmat = [str(int(comb(p+q, p))) for p in range(n+1) for q in range(n+1)]
 
     ccode = f"""
 
@@ -67,25 +67,33 @@ void tabulate_bernstein_mass_tri(double *f0, double *A)
     }}
   }}
 
-    // double A[{(n + 1) * (n + 2) // 2}][{(n + 1) * (n + 2) // 2}] = {{0}};
-    double cmat[{n+1}][{n+1}] = {{{', '.join(cmat)}}};
+  // double A[{(n + 1) * (n + 2) // 2}][{(n + 1) * (n + 2) // 2}] = {{0}};
+  short int cmat[{n+1}][{n+1}] = {{{', '.join(cmat)}}};
 
-    for (int a = 0; a < {n+1}; ++a)
+  for (int a = 0; a < {n+1}; ++a)
+  {{
+    int i = a;
+    int ia = {n+1};
+    for (int a2 = 0; a2 < ({n + 1} - a); ++a2)
     {{
-      for (int a2 = 0; a2 < ({n + 1} - a); ++a2)
+      // int i = ({(2 * n + 3)} * a2 - a2 * a2) / 2 + a;
+      for (int b = 0; b < {n + 1}; ++b)
       {{
-        int i = ({(2 * n + 3)} * a2 - a2 * a2) / 2 + a;
-        for (int b = 0; b < {n + 1}; ++b)
+        int j = b;
+        int jb = {n+1};
+        for (int b2 = 0; b2 < {n + 1} - b; ++b2)
         {{
-          for (int b2 = 0; b2 < {n + 1} - b; ++b2)
-          {{
-          int j = ({(2 * n + 3)} * b2 - b2 * b2) / 2 + b;
-          A[i*{(n+1)*(n+2)//2} + j] = cmat[a][b] * cmat[a2][b2]
-             * cmat[{n} - a - a2][{n} - b - b2] * f2[a + b][a2 + b2] / cmat[{n}][{n}];
-          }}
+        // int j = ({(2 * n + 3)} * b2 - b2 * b2) / 2 + b;
+        A[i*{(n+1)*(n+2)//2} + j] = cmat[a][b] * cmat[a2][b2]
+           * cmat[{n} - a - a2][{n} - b - b2] * f2[a + b][a2 + b2] / cmat[{n}][{n}];
+        j += jb;
+        jb--;
         }}
       }}
+      i += ia;
+      ia--;
     }}
+  }}
 }}
 
 """
@@ -94,4 +102,4 @@ void tabulate_bernstein_mass_tri(double *f0, double *A)
 
 
 with open("b.c", "w") as fd:
-    fd.write(compute_mass_matrix_triangle(3, lambda x, y: 1.0, 0))
+    fd.write(compute_mass_matrix_triangle(2, 1))

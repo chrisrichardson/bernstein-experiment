@@ -42,8 +42,8 @@ def test_mass_matrix(px, py, n):
     b = symfem.elements.bernstein.bernstein_polynomials(n, 2)
 
     mass2 = np.array([[float(
-        (i * j * f(x, y)).integrate([x, 0, 1-y], [y, 0, 1])
-    ) for i in b] for j in b])
+        (bi * bj * f(x, y)).integrate([x, 0, 1-y], [y, 0, 1])
+    ) for bi in b] for bj in b])
 
     print(mass1)
     print(mass2)
