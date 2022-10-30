@@ -1,6 +1,5 @@
 
 import scipy.special
-from scipy.special import comb
 
 
 # Pack index

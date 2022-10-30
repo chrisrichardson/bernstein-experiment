@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.special
-from scipy.special import comb
 
 
 # Pack index
@@ -132,7 +131,7 @@ def compute_mass_matrix_triangle(n, f=None, fdegree=0):
     print()
     # Final scaling (a+a2 outer)
     r = np.ones(n+1, dtype=int)
-    for asum in range(n,-1,-1):
+    for asum in range(n, -1, -1):
         k = 0
         for b in range(n + 1):
             for b2 in range(n - b + 1):
@@ -155,4 +154,4 @@ def compute_mass_matrix_triangle(n, f=None, fdegree=0):
 
 
 np.set_printoptions(linewidth=120)
-print(compute_mass_matrix_triangle(3, lambda x,y: 1.0, 4))
+print(compute_mass_matrix_triangle(3, lambda x, y: 1.0, 4))

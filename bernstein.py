@@ -101,5 +101,6 @@ def compute_mass_matrix_triangle(n, f=None, fdegree=0):
     mat /= cmat[n, n]
     return mat
 
+
 np.set_printoptions(linewidth=120)
-print(compute_mass_matrix_triangle(2, lambda x,y: 1.0, 4))
+print(compute_mass_matrix_triangle(2, lambda x, y: 1.0, 4))
